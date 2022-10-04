@@ -1,103 +1,112 @@
-import React, { useEffect } from "react";
+import React, {useEffect} from "react";
 import {
-  Divider,
-  List,
-  ListItem,
-  ListItemText,
-  ListSubheader,
-  ListItemIcon,
-  Box,
-  CircularProgress,
+    Box,
+    CircularProgress,
+    Divider,
+    List,
+    ListItem,
+    ListItemIcon,
+    ListItemText,
+    ListSubheader,
 } from "@mui/material";
-import { Link } from "react-router-dom";
-import { useTheme } from "@mui/styles";
-import { useGetGenresQuery } from "../../services/TMDB";
-import { selectGenreOrCategory } from "../../features/currentGenreOrCategory";
-import { useDispatch, useSelector } from "react-redux";
+import {Link} from "react-router-dom";
+import {useTheme} from "@mui/styles";
+import {useGetGenresQuery} from "../../services/TMDB";
+import {selectGenreOrCategory} from "../../features/currentGenreOrCategory";
+import {useDispatch, useSelector} from "react-redux";
 
 import useStyles from "./style";
 import genresIcons from "../../assets/genres";
+import {Search} from "../index";
 
-const blueLogo =
-  "https://fontmeme.com/permalink/210930/8531c658a743debe1e1aa1a2fc82006e.png";
-const redLogo =
-  "https://fontmeme.com/permalink/210930/6854ae5c7f76597cf8680e48a2c8a50a.png";
+import blueLogo from '../../assets/icon/filmhub-blue.png';
+import redLogo from '../../assets/icon/filmhub-red.png';
 
-const Sidebar = ({ setmobileOpen }) => {
-  const { genreIdOrCategoryName } = useSelector(
-    (state) => state.currentGenreOrCategory
-  );
-  const theme = useTheme();
-  const classes = useStyles();
-  const { data, isFetching } = useGetGenresQuery();
-  const dispatch = useDispatch();
+const Sidebar = ({setmobileOpen}) => {
+    const {genreIdOrCategoryName} = useSelector(
+        (state) => state.currentGenreOrCategory
+    );
+    const theme = useTheme();
+    const classes = useStyles();
+    const {data, isFetching} = useGetGenresQuery();
+    const dispatch = useDispatch();
 
-  const categories = [
-    { label: "Popular", value: "popular" },
-    { label: "Top Rated", value: "top_rated" },
-    { label: "UpComing", value: "upcoming" },
-  ];
+    useEffect(() => {
+        setmobileOpen(false);
+    }, [genreIdOrCategoryName])
 
-  return (
-    <>
-      <Link to="/" className={classes.imageLink}>
-        <img
-          className={classes.image}
-          src={theme.palette.mode === "light" ? blueLogo : redLogo}
-          alt="Filmpire Logo"
-        />
-      </Link>
-      <Divider />
-      <List>
-        <ListSubheader>Categories</ListSubheader>
-        {categories.map(({ label, value }) => (
-          <Link key={value} className={classes.links} to="/">
-            <ListItem
-              onClick={() => dispatch(selectGenreOrCategory(value))}
-              button
-            >
-              <ListItemIcon>
+    const categories = [
+        {label: "Popular", value: "popular"},
+        {label: "Top Rated", value: "top_rated"},
+        {label: "UpComing", value: "upcoming"},
+    ];
+
+    return (
+        <>
+            <Link to="/" className={classes.imageLink}>
                 <img
-                  src={genresIcons[value.toLowerCase()]}
-                  className={classes.genreImages}
-                  height={30}
+                    className={classes.image}
+                    src={theme.palette.mode === "light" ? blueLogo : redLogo}
+                    alt="Filmpire Logo"
                 />
-              </ListItemIcon>
-              <ListItemText primary={label} />
-            </ListItem>
-          </Link>
-        ))}
-      </List>
-
-      <Divider />
-      <List>
-        <ListSubheader>Genres</ListSubheader>
-        {isFetching ? (
-          <Box display="flex" justifyContent="center">
-            <CircularProgress />
-          </Box>
-        ) : (
-          data.genres.map(({ name, id }) => (
-            <Link key={name} className={classes.links} to="/">
-              <ListItem
-                onClick={() => dispatch(selectGenreOrCategory(id))}
-                button
-              >
-                <ListItemIcon>
-                  <img
-                    src={genresIcons[name.toLowerCase()]}
-                    className={classes.genreImages}
-                    height={30}
-                  />
-                </ListItemIcon>
-                <ListItemText primary={name} />
-              </ListItem>
             </Link>
-          ))
-        )}
-      </List>
-    </>
-  );
+            <Divider/>
+            <List>
+                <Box display="flex" justifyContent="center">
+                    <Search/>
+                </Box>
+            </List>
+            <Divider/>
+            <List>
+                <ListSubheader>Categories</ListSubheader>
+                {categories.map(({label, value}) => (
+                    <Link key={value} className={classes.links} to="/">
+                        <ListItem
+                            onClick={() => dispatch(selectGenreOrCategory(value))}
+                        >
+                            <ListItemIcon>
+                                <img
+                                    src={genresIcons[value.toLowerCase()]}
+                                    className={classes.genreImages}
+                                    height={30}
+                                    alt={label}
+                                />
+                            </ListItemIcon>
+                            <ListItemText primary={label}/>
+                        </ListItem>
+                    </Link>
+                ))}
+            </List>
+
+            <Divider/>
+            <List>
+                <ListSubheader>Genres</ListSubheader>
+                {isFetching ? (
+                    <Box display="flex" justifyContent="center">
+                        <CircularProgress/>
+                    </Box>
+                ) : (
+                    data.genres.map(({name, id}) => (
+                        <Link key={name} className={classes.links} to="/">
+                            <ListItem
+                                onClick={() => dispatch(selectGenreOrCategory(id))}
+                            >
+                                <ListItemIcon>
+                                    <img
+                                        src={genresIcons[name.toLowerCase()]}
+                                        className={classes.genreImages}
+                                        height={30}
+                                        alt={name}
+                                    />
+                                </ListItemIcon>
+                                <ListItemText primary={name}/>
+                            </ListItem>
+                        </Link>
+                    ))
+                )}
+            </List>
+        </>
+    );
 };
 
 export default Sidebar;

@@ -4,7 +4,7 @@ const drawerWidth = "240px";
 
 export default makeStyles((theme) => ({
   Toolbar: {
-    height: "80px",
+    height: "70px",
     display: "flex",
     justifyContent: "space-between",
     marginLeft: "240px",
