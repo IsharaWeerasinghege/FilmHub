@@ -10,8 +10,11 @@ const useAlan = () => {
     const {setMode} = useContext(ColorModeContext)
 
     useEffect(() => {
+        const alanKey = process.env.REACT_APP_ALAN_KEY;
+        if (!alanKey) return;
+
         alanBtn({
-            key: '478904f16cf34a2ab36a607021cf8c4c2e956eca572e1d8b807a3e2338fdd0dc/stage',
+            key: alanKey,
             onCommand: ({command, mode, genres, genreOrCategory, query}) => {
                 if(command === 'chooseGenre'){
                     const foundGenre = genres.find((g) => g.name.toLowerCase() === genreOrCategory.toLowerCase());
